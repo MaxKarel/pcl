@@ -125,12 +125,13 @@ if(CMAKE_COMPILER_IS_GNUCXX)
   endif()
 endif()
 
+message("AAAAAAAAAAAAAA")
 if(CMAKE_COMPILER_IS_MSVC)
   add_definitions("-DBOOST_ALL_NO_LIB -D_SCL_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS -DNOMINMAX -DPCL_ONLY_CORE_POINT_TYPES ${SSE_DEFINITIONS}")
-  
+  message("")
   if("${CMAKE_CXX_FLAGS}" STREQUAL "${CMAKE_CXX_FLAGS_DEFAULT}")
     string(APPEND CMAKE_CXX_FLAGS " /fp:precise /wd4800 /wd4521 /wd4251 /wd4275 /wd4305 /wd4355 ${SSE_FLAGS} ${AVX_FLAGS} /bigobj")
-
+    message("OK1")
     # Add extra code generation/link optimizations
     if(CMAKE_MSVC_CODE_LINK_OPTIMIZATION AND (NOT BUILD_CUDA) AND (NOT BUILD_GPU))
       string(APPEND CMAKE_CXX_FLAGS_RELEASE " /GL")
@@ -138,7 +139,7 @@ if(CMAKE_COMPILER_IS_MSVC)
       string(APPEND CMAKE_EXE_LINKER_FLAGS_RELEASE " /LTCG")
     else()
       set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -Xcompiler=/bigobj")
-      
+      message("OK2")
       message("Global optimizations /GL has been turned off, as it doesn't work with nvcc/thrust")
     endif()
     # /MANIFEST:NO") # please, don't disable manifest generation, otherwise crash at start for vs2008
@@ -169,6 +170,9 @@ if(CMAKE_COMPILER_IS_MSVC)
         add_compile_options($<$<OR:$<COMPILE_LANGUAGE:C>,$<COMPILE_LANGUAGE:CXX>>:/MP${MSVC_MP}>)
       endif()
     endif()
+  else()
+    message("NotOK2")
+    string(APPEND CMAKE_CXX_FLAGS " /bigobj")
   endif()
 
   if(CMAKE_GENERATOR STREQUAL "Ninja")
